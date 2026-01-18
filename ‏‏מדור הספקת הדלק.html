@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>נכס"ל – מדור הספקת הדלק</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#f4f6f9;
+  --card:#ffffff;
+  --brand:#0b3c5d;
+  --brand2:#08293f;
+  --muted:#6b7280;
+  --line:#e6eaf0;
+  --shadow:0 15px 35px rgba(0,0,0,.12);
+}
+
+body.dark{
+  --bg:#020617;
+  --card:#0f172a;
+  --brand:#020617;
+  --brand2:#020617;
+  --muted:#94a3b8;
+  --line:#1f2933;
+  --shadow:0 15px 35px rgba(0,0,0,.6);
+  color:#e5e7eb;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:"Rubik",Arial;
+  background:var(--bg);
+  color:#0f172a;
+  transition:.2s;
+}
+
+/* HEADER */
+.header{
+  background:linear-gradient(180deg,var(--brand),var(--brand2));
+  color:#fff;
+  padding:14px 18px 18px;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+.header .basad{
+  text-align:center;
+  font-size:12px;
+  opacity:.9;
+}
+.header .datetime{
+  text-align:center;
+  font-size:12px;
+  margin-top:2px;
+  opacity:.9;
+}
+.header h1{margin:6px 0 0;text-align:center;font-size:22px;font-weight:800}
+
+/* CONTROLS */
+.controls{
+  margin-top:12px;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.controls input,
+.controls select,
+.controls button{
+  padding:10px;
+  border-radius:12px;
+  border:none;
+  font-size:14px;
+  flex:1;
+}
+.controls input,
+.controls select{background:#fff}
+.controls button{
+  background:#25D366;
+  color:white;
+  font-weight:800;
+  cursor:pointer;
+}
+.toggle{background:#111827 !important}
+.logbtn{background:#6d28d9 !important}
+
+/* STATUS BAR */
+.status-bar{
+  margin-top:10px;
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.stat{
+  background:#ffffff33;
+  padding:6px 14px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:800;
+}
+
+/* LAYOUT */
+.wrap{max-width:900px;margin:20px auto 40px;padding:0 16px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+
+/* CARD */
+.card{
+  background:var(--card);
+  border-radius:26px;
+  box-shadow:var(--shadow);
+  padding:18px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+/* TOP */
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.badge{
+  background:#eef2ff;
+  color:#1e3a8a;
+  padding:6px 14px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:800;
+}
+body.dark .badge{
+  background:#1e293b;
+  color:#93c5fd;
+}
+.name{
+  font-size:18px;
+  font-weight:800;
+}
+.role{
+  font-size:13px;
+  color:var(--muted);
+}
+
+/* DETAILS */
+.details{margin-top:8px}
+.row{
+  display:flex;
+  justify-content:space-between;
+  padding:8px 0;
+  border-bottom:1px dashed var(--line);
+  font-size:14px;
+}
+.row:last-child{border-bottom:none}
+
+/* ACTIONS */
+.actions{
+  display:flex;
+  gap:10px;
+  margin-top:14px;
+}
+.actions a,
+.actions button{
+  flex:1;
+  padding:12px;
+  border-radius:14px;
+  font-weight:800;
+  border:none;
+  cursor:pointer;
+  font-size:14px;
+  color:white;
+  min-height:48px;
+}
+.whatsapp{background:#22c55e}
+.call{background:#2563eb}
+.emergency-btn{background:#dc2626}
+
+/* TOUCH FIX */
+.actions a,
+.actions button,
+.modal-actions a{
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+button, a{user-select:none}
+
+/* MODAL */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+.modal.active{display:flex}
+.modal-box{
+  background:white;
+  border-radius:20px;
+  padding:20px;
+  width:90%;
+  max-width:320px;
+  text-align:center;
+  box-shadow:0 20px 50px rgba(0,0,0,.3);
+  transform:scale(.9);
+  transition:.15s ease;
+}
+.modal.active .modal-box{transform:scale(1)}
+.modal-box h3{margin:0 0 8px;font-size:18px;font-weight:800}
+.modal-box .em-name{font-weight:800;margin-bottom:14px}
+.modal-actions{display:flex;gap:10px}
+.modal-actions a{
+  flex:1;
+  padding:12px;
+  border-radius:14px;
+  font-weight:800;
+  text-decoration:none;
+  color:white;
+}
+.modal-call{background:#dc2626}
+.modal-wa{background:#25D366}
+
+/* LOG LIST */
+#logList{
+  max-height:280px;
+  overflow:auto;
+  font-size:13px;
+  text-align:right;
+  margin-bottom:12px;
+}
+
+/* RESPONSIVE */
+@media(max-width:700px){
+  .grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="basad">בס״ד</div>
+  <div class="datetime" id="datetime">--/--/---- --:--:--</div>
+  <h1>נכס"ל – מדור הספקת הדלק</h1>
+
+  <div class="controls">
+    <input id="search" placeholder="חיפוש לפי שם / תפקיד / עיר...">
+
+    <select id="categoryFilter">
+      <option value="">כל הקטגוריות</option>
+      <option value="מדור">מדור</option>
+      <option value="חמ&quot;ל">חמ"ל</option>
+      <option value="מוקד הדלק">מוקד הדלק</option>
+    </select>
+
+    <button onclick="sendToAll()">שלח לכולם (מסוננים)</button>
+    <button class="toggle" onclick="toggleMode()">🌙 מצב לילה</button>
+    <button class="logbtn" onclick="openLog()">📜 לוג חירום</button>
+  </div>
+
+  <div class="status-bar">
+    <div class="stat" id="countShown">מוצגים: 0</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="grid" id="people"></div>
+</div>
+
+<!-- MODAL חירום -->
+<div class="modal" id="emModal">
+  <div class="modal-box">
+    <h3>איש קשר לחירום</h3>
+    <div class="em-name" id="emName">—</div>
+    <div class="modal-actions">
+      <a id="emCall" class="modal-call" href="#">חיוג</a>
+      <a id="emWa" class="modal-wa" target="_blank" href="#">וואטסאפ</a>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL לוג -->
+<div class="modal" id="logModal">
+  <div class="modal-box">
+    <h3>📜 לוג חירום</h3>
+    <div id="logList"></div>
+    <div class="modal-actions">
+      <a style="background:#2563eb" href="#" onclick="exportLogs();return false;">ייצוא לאקסל</a>
+      <a style="background:#dc2626" href="#" onclick="clearLogs();return false;">נקה לוג</a>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================
+   DATE & TIME
+   ========================= */
+function updateDateTime(){
+  const now = new Date();
+  const pad = n => String(n).padStart(2, "0");
+  const str =
+    pad(now.getDate()) + "/" +
+    pad(now.getMonth()+1) + "/" +
+    now.getFullYear() + " " +
+    pad(now.getHours()) + ":" +
+    pad(now.getMinutes()) + ":" +
+    pad(now.getSeconds());
+  document.getElementById("datetime").textContent = str;
+}
+setInterval(updateDateTime, 1000);
+updateDateTime();
+
+/* =========================
+   DATA
+   ========================= */
+const people = [
+  // מדור
+  {category:"מדור", first:"עדי", last:"ניסטנפובר", phone:"972526927673", role:'רמ"ד הספקת הדלק', address:"שברץ 2/1", city:"רעננה", status:"קבע", emergencyName:"עומר", emergencyPhone:"972508768030"},
+  {category:"מדור", first:"עדי", last:"שרם", phone:"972529203303", role:'קמ"ד ביצוע הספקות', address:"נופך 3", city:"גדרה", status:"קבע", emergencyName:"דליה", emergencyPhone:"972507872707"},
+  {category:"מדור", first:"ישראל", last:"ברוכיאן", phone:"972526986372", role:'קמ"ד הספקות דלק וגז', address:"הרב קוק 50/15", city:"בית שמש", status:'אע"צ', emergencyName:"קמחית", emergencyPhone:"972533194587"},
+  {category:"מדור", first:"מייקל", last:"בנק", phone:"972502245570", role:'ממ"ל הספקות דלק וגז', address:"רמב\"ם 2", city:"כפר יונה", status:"סדיר", emergencyName:"אורנית", emergencyPhone:"972542245573"},
+  {category:"מדור", first:"מירב", last:"שמקה", phone:"972507222595", role:'קמ"ד תדלוק ממוחשב', address:"דוריף 13/4", city:"אשקלון", status:"קבע", emergencyName:"אודי", emergencyPhone:"972506360058"},
+  {category:"מדור", first:"אוראל", last:"זרזר", phone:"972535757487", role:'ממ"ל תדלוק ממוחשב', address:"יהודה הלוי 29", city:"ראש העין", status:"קבע", emergencyName:"אילת", emergencyPhone:"972528880703"},
+  {category:"מדור", first:"שני", last:"אלול", phone:"972527483375", role:'רלש\"ית רמ\"ד', address:"סרלין יוסף 22/1", city:"תל אביב", status:"סדיר", emergencyName:"אירינה", emergencyPhone:"972523228006"},
+  {category:"מדור", first:"רוני", last:"סימנה", phone:"972509709937", role:'ע\' רמ\"ד רציפות תפקודית', address:"סחלב 5/6", city:"מגדל העמק", status:"קבע", emergencyName:"רוית", emergencyPhone:"972532709937"},
+  {category:"מדור", first:"נתנאל", last:"בורוכוב", phone:"972538267742", role:'פרוייקטור עמ\"ט השירות', address:"נורדאו 6", city:"רחובות", status:"מילואים", emergencyName:"מעיין", emergencyPhone:"972546343954"},
+
+  // חמ"ל
+  {category:'חמ"ל', first:"מקסים", last:"קובילב", phone:"972547548912", role:'נציג תא הספקת הדלק', address:"ראש פינה 38/8", city:"אשדוד", status:"מילואים", emergencyName:"יוליה", emergencyPhone:"972549092313"},
+
+  // מוקד הדלק
+  {category:"מוקד הדלק", first:"דוב", last:"קוק", phone:"972534768379", role:'מפקד מוקד', address:"אדמו\"ר הצמח צדק 26/1", city:"כפר חב\"ד", status:"קבע", emergencyName:"משה", emergencyPhone:"972506733671"},
+  {category:"מוקד הדלק", first:"אהרון", last:"אזולאי", phone:"972503408762", role:"רכז שירות", address:"הארבעה 32", city:"ירושלים", status:"מילואים", emergencyName:"איילת", emergencyPhone:"972504749265"},
+  {category:"מוקד הדלק", first:"אוריאל", last:"מולוקנדוב", phone:"972549757474", role:"רכז שירות", address:"דרך חיל החימוש 15", city:"ראשון לציון", status:"מילואים", emergencyName:"אברהם", emergencyPhone:"972546840820"},
+  {category:"מוקד הדלק", first:"מתנאל", last:"אליעזר", phone:"972542387767", role:"רכז שירות", address:"כנען 2", city:"אור יהודה", status:"מילואים", emergencyName:"שני", emergencyPhone:"972506524464"},
+  {category:"מוקד הדלק", first:"נוח", last:"רייצר", phone:"972584001431", role:"רכז שירות", address:"חיי יצחק 7", city:"ביתר עילית", status:"סדיר", emergencyName:"חיים", emergencyPhone:"972584001435"},
+  {category:"מוקד הדלק", first:"שלום", last:"כלפון", phone:"972585586770", role:"רכז שירות", address:"בנימין מינץ 52", city:"פתח תקווה", status:"סדיר", emergencyName:"דוד", emergencyPhone:"972586274872"}
+];
+
+/* ELEMENTS */
+const container = document.getElementById("people");
+const search = document.getElementById("search");
+const categoryFilter = document.getElementById("categoryFilter");
+const countShown = document.getElementById("countShown");
+
+const modal = document.getElementById("emModal");
+const emName = document.getElementById("emName");
+const emCall = document.getElementById("emCall");
+const emWa = document.getElementById("emWa");
+
+/* LOG */
+const LOG_KEY = "emergencyLogs";
+function getLogs(){ return JSON.parse(localStorage.getItem(LOG_KEY) || "[]"); }
+function saveLogs(logs){ localStorage.setItem(LOG_KEY, JSON.stringify(logs)); }
+function addLog(entry){
+  const logs = getLogs();
+  logs.push(entry);
+  saveLogs(logs);
+}
+function formatTime(ts){
+  return new Date(ts).toLocaleString("he-IL");
+}
+
+/* MODE */
+function toggleMode(){
+  document.body.classList.toggle("dark");
+  localStorage.setItem("darkMode", document.body.classList.contains("dark"));
+}
+if(localStorage.getItem("darkMode")==="true"){
+  document.body.classList.add("dark");
+}
+
+/* MODAL OPEN */
+function openEmergency(name, phone, owner){
+  addLog({person:owner, emergency:name, phone:phone, time:Date.now()});
+  emName.textContent = name;
+  emCall.href = "tel:+" + phone;
+  emWa.href = "https://wa.me/" + phone + "?text=" +
+    encodeURIComponent("מדובר במצב חירום, נא ליצור קשר מיידי");
+  modal.classList.add("active");
+}
+
+/* CLOSE MODALS */
+modal.addEventListener("click", e=>{
+  if(e.target===modal) modal.classList.remove("active");
+});
+document.getElementById("logModal").addEventListener("click", e=>{
+  if(e.target.id==="logModal") document.getElementById("logModal").classList.remove("active");
+});
+
+/* LOG VIEW */
+function openLog(){
+  const list=document.getElementById("logList");
+  const logs=getLogs();
+  list.innerHTML = logs.length ? logs.map(l=>`
+    <div style="padding:6px 0;border-bottom:1px dashed #ccc">
+      <b>${l.person}</b><br>
+      איש חירום: ${l.emergency}<br>
+      טלפון: ${l.phone}<br>
+      ⏱ ${formatTime(l.time)}
+    </div>`).join("") : "אין אירועי חירום רשומים";
+  document.getElementById("logModal").classList.add("active");
+}
+function exportLogs(){
+  const logs=getLogs();
+  if(!logs.length){alert("אין לוגים");return}
+  const csv=[["איש צוות","איש חירום","טלפון","זמן"],...logs.map(l=>[l.person,l.emergency,l.phone,formatTime(l.time)])]
+    .map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
+  const blob=new Blob([csv],{type:"text/csv"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="emergency_log.csv";
+  a.click();
+}
+function clearLogs(){
+  if(confirm("למחוק לוג?")){localStorage.removeItem(LOG_KEY);openLog()}
+}
+
+/* EVENT DELEGATION לחירום */
+document.addEventListener("click", e=>{
+  const btn=e.target.closest(".emergency-btn");
+  if(!btn)return;
+  openEmergency(btn.dataset.name, btn.dataset.phone, btn.dataset.owner);
+});
+
+/* RENDER */
+function render(){
+  const text=search.value.toLowerCase();
+  const cat=categoryFilter.value;
+  container.innerHTML="";
+
+  const filtered=people.filter(p=>
+    (cat===""||p.category===cat) &&
+    (`${p.first} ${p.last}`.toLowerCase().includes(text) ||
+     p.role.toLowerCase().includes(text) ||
+     p.city.toLowerCase().includes(text))
+  );
+
+  countShown.textContent="מוצגים: "+filtered.length;
+
+  filtered.forEach(p=>{
+    const card=document.createElement("div");
+    card.className="card";
+    const mainMsg='נכס"ל! נכס"ל! נכס"ל! נא לדווח מיקומך במיידי - בקבוצה הראשית של המדור';
+    card.innerHTML=`
+      <div class="top">
+        <div>
+          <div class="name">${p.first} ${p.last}</div>
+          <div class="role">${p.role}</div>
+        </div>
+        <div class="badge">${p.category}</div>
+      </div>
+      <div class="details">
+        <div class="row"><span>📍 כתובת</span><b>${p.address}</b></div>
+        <div class="row"><span>🏙 עיר</span><b>${p.city}</b></div>
+        <div class="row"><span>📌 סטטוס</span><b>${p.status}</b></div>
+      </div>
+      <div class="actions">
+        <a class="whatsapp" target="_blank"
+          href="https://wa.me/${p.phone}?text=${encodeURIComponent(mainMsg)}">וואטסאפ</a>
+        <a class="call" href="tel:+${p.phone}">התקשר</a>
+        <button class="emergency-btn"
+          data-name="${p.emergencyName}"
+          data-phone="${p.emergencyPhone}"
+          data-owner="${p.first} ${p.last}">
+          איש קשר לחירום
+        </button>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+/* SEND ALL (מסוננים) */
+function sendToAll(){
+  const msg='נכס"ל! נכס"ל! נכס"ל! נא לדווח מיקומך במיידי - בקבוצה הראשית של המדור';
+  if(!confirm("לשלוח הודעה לכל המוצגים?\n\n"+msg))return;
+  const enc=encodeURIComponent(msg);
+  const text=search.value.toLowerCase();
+  const cat=categoryFilter.value;
+  const filtered=people.filter(p=>
+    (cat===""||p.category===cat) &&
+    (`${p.first} ${p.last}`.toLowerCase().includes(text) ||
+     p.role.toLowerCase().includes(text) ||
+     p.city.toLowerCase().includes(text))
+  );
+  filtered.forEach((p,i)=>{
+    setTimeout(()=>window.open(`https://wa.me/${p.phone}?text=${enc}`,"_blank"),i*700);
+  });
+}
+
+/* INIT */
+search.addEventListener("input", render);
+categoryFilter.addEventListener("change", render);
+render();
+</script>
+
+</body>
+</html>
